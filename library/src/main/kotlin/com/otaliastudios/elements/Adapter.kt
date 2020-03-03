@@ -379,6 +379,33 @@ public final class Adapter private constructor(
         return presenterForType(viewType).createHolder(parent, viewType)
     }
 
+    @Suppress("UNCHECKED_CAST")
+    override fun onViewAttachedToWindow(holder: Presenter.Holder) {
+        super.onViewAttachedToWindow(holder)
+        val presenter = typeMap.get(holder.itemViewType) as Presenter<Any>
+        val query = pageManager.elementAt(holder.adapterPosition, true)!!
+        val page = query.page
+        val element = query.element as Element<Any>
+
+        if (element.type != holder.itemViewType) {
+            throw RuntimeException("Something is wrong here...")
+        }
+        presenter.onViewAttached(page, holder, element)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun onViewDetachedFromWindow(holder: Presenter.Holder) {
+        val presenter = typeMap.get(holder.itemViewType) as Presenter<Any>
+        val query = pageManager.elementAt(holder.adapterPosition, true)!!
+        val page = query.page
+        val element = query.element as Element<Any>
+        if (element.type != holder.itemViewType) {
+            throw RuntimeException("Something is wrong here...")
+        }
+        presenter.onViewDetached(page, holder, element)
+        super.onViewDetachedFromWindow(holder)
+    }
+
     /**
      * Binds the element at this position with the presenter that manages
      * this element type.
@@ -538,7 +565,7 @@ public final class Adapter private constructor(
 
 
     init {
-        registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
+        registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
                 if (autoScrollMode == AUTOSCROLL_POSITION_0 && positionStart == 0) {

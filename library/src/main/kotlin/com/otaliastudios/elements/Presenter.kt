@@ -22,7 +22,7 @@ import com.otaliastudios.elements.extensions.*
  * @param context an activity context
  * @param onElementClick a click callback
  */
-public abstract class Presenter<T: Any>(
+public abstract class Presenter<T : Any>(
         protected val context: Context,
         protected var onElementClick: ((Page, Holder, Element<T>) -> Unit)? = null
 ) : LifecycleOwner {
@@ -89,6 +89,15 @@ public abstract class Presenter<T: Any>(
     public abstract val elementTypes: Collection<Int>
 
 
+    public open fun onViewAttached(page: Page, holder: Holder, element: Element<T>) {
+
+    }
+
+    public open fun onViewDetached(page: Page, holder: Holder, element: Element<T>) {
+
+    }
+
+
     /**
      * Called when it's time to bind model values, represented by the [Element], to views
      * represented by the given [Holder], for the given [Page].
@@ -131,8 +140,11 @@ public abstract class Presenter<T: Any>(
      */
     public open fun onPreAnimate(animation: AnimationType, holder: Holder, view: View) {
         when (animation) {
-            AnimationType.REMOVE -> {}
-            AnimationType.ADD -> { view.alpha = 0F }
+            AnimationType.REMOVE -> {
+            }
+            AnimationType.ADD -> {
+                view.alpha = 0F
+            }
         }
     }
 
@@ -150,8 +162,12 @@ public abstract class Presenter<T: Any>(
      */
     public open fun onPostAnimate(animation: AnimationType, holder: Holder, view: View) {
         when (animation) {
-            AnimationType.REMOVE -> { view.alpha = 1F }
-            AnimationType.ADD -> { view.alpha = 1F }
+            AnimationType.REMOVE -> {
+                view.alpha = 1F
+            }
+            AnimationType.ADD -> {
+                view.alpha = 1F
+            }
         }
     }
 
@@ -168,8 +184,12 @@ public abstract class Presenter<T: Any>(
      */
     public open fun onAnimate(animation: AnimationType, holder: Holder, animator: ViewPropertyAnimator) {
         when (animation) {
-            AnimationType.REMOVE -> { animator.alpha(0F) }
-            AnimationType.ADD -> { animator.alpha(1F) }
+            AnimationType.REMOVE -> {
+                animator.alpha(0F)
+            }
+            AnimationType.ADD -> {
+                animator.alpha(1F)
+            }
         }
     }
 
@@ -178,7 +198,7 @@ public abstract class Presenter<T: Any>(
      * Holds an internal map of objects, that might be views or whatever else you need.
      * Just use [set] and [get] to retrieve them.
      */
-    public class Holder(view: View): RecyclerView.ViewHolder(view) {
+    public class Holder(view: View) : RecyclerView.ViewHolder(view) {
 
         private val map: MutableMap<String, Any?> = mutableMapOf()
 
@@ -186,7 +206,9 @@ public abstract class Presenter<T: Any>(
          * Sets an object to be held by this Holder. Might be a view,
          * or any other object you need to attach.
          */
-        public fun set(key: String, value: Any?) { map[key] = value }
+        public fun set(key: String, value: Any?) {
+            map[key] = value
+        }
 
         /**
          * Returns an object that was previously attached to this
@@ -208,7 +230,7 @@ public abstract class Presenter<T: Any>(
          * Creates a [SimplePresenter] with Kotlin-friendly syntax,
          * and restricted functionality. Extend the class for more freedom.
          */
-        fun <T: Any> simple(context: Context, layoutRes: Int, elementType: Int, bind: ((View, T) -> Unit)? = null) = SimplePresenter(context, layoutRes, elementType, bind)
+        fun <T : Any> simple(context: Context, layoutRes: Int, elementType: Int, bind: ((View, T) -> Unit)? = null) = SimplePresenter(context, layoutRes, elementType, bind)
 
         /**
          * Creates a [ErrorPresenter] with Kotlin-friendly syntax,
@@ -243,7 +265,7 @@ public abstract class Presenter<T: Any>(
          * Creates a [DataBindingPresenter] with Kotlin-friendly syntax,
          * and restricted functionality. Extend the class for more freedom.
          */
-        fun <T: Any, D: ViewDataBinding> withDataBinding(context: Context, elementType: Int, factory: (LayoutInflater, ViewGroup) -> D, bind: (D, T) -> Unit) = object : DataBindingPresenter<T, D>(context) {
+        fun <T : Any, D : ViewDataBinding> withDataBinding(context: Context, elementType: Int, factory: (LayoutInflater, ViewGroup) -> D, bind: (D, T) -> Unit) = object : DataBindingPresenter<T, D>(context) {
 
             override val elementTypes = listOf(elementType)
 
